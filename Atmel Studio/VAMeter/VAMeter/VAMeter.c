@@ -87,17 +87,19 @@ void	delay_sec(uint8_t sec)
 void	lcdLineClear(uint8_t y)
 {
 	lcdSetPos(0, y);
-	lcdPutStr("                ");	//16桁
+	//lcdPutStr("                ");	//16桁
 }
 
 //電圧を表示する
 //引数：	mV単位の値
-void	lcdPutVoltage(uint16_t mValue)
+void	lcdPutVoltage(uint16_t mValue, int pos)
 {
 	uint16_t	num, dec;
 	
 	lcdLineClear(VOLTAGE_Y);
-	lcdSetPos(VOLTAGE_X, VOLTAGE_Y);
+	lcdSetPos(VOLTAGE_X + pos*8, VOLTAGE_Y);
+	if (pos == 1)
+		lcdPutChar('-');
 	
 	num = mValue / 1000;	//整数部
 	dec = mValue % 1000;	//小数部
@@ -128,12 +130,14 @@ void	lcdPutVoltage(uint16_t mValue)
 
 //電流を表示する
 //引数：	0.1mA単位の値
-void	lcdPutCurrent(uint16_t mValue)
+void	lcdPutCurrent(uint16_t mValue, int pos)
 {
 	uint16_t	num, dec;
 	
 	lcdLineClear(CURRENT_Y);
-	lcdSetPos(CURRENT_X, CURRENT_Y);
+	lcdSetPos(CURRENT_X + pos*8, CURRENT_Y);
+	if (pos == 1)
+		lcdPutChar('-');
 	
 	num = mValue / 10;	//整数部
 	dec = mValue % 10;	//小数部
@@ -177,14 +181,19 @@ ISR(ADC_vect)
 //MUX0  -> 0111-0000:PC7-PC0, 1110:内部的に1.1Vを接続, 1111:内部的に0Vを接続
 #define	ADC_SET_CURRENT	((0b00 << REFS0) | (0b0000 << MUX0))
 #define	ADC_SET_VOLTAGE	((0b00 << REFS0) | (0b0001 << MUX0))
+#define	ADC_SET_CURRENT2	((0b00 << REFS0) | (0b0010 << MUX0))
+#define	ADC_SET_VOLTAGE2	((0b00 << REFS0) | (0b0011 << MUX0))
 
 int	main(void)
 {
 	uint16_t	adcVoltages[BUFSIZE] = {0UL};
 	uint16_t	adcCurrents[BUFSIZE] = {0UL};
+	uint16_t	adcVoltages2[BUFSIZE] = {0UL};
+	uint16_t	adcCurrents2[BUFSIZE] = {0UL};
 	uint16_t	adcValue;
 	uint16_t	mVoltage, mCurrent;
 	uint8_t	idx;
+	uint8_t	idx2;
 	float	fv, fa;
 	
 	lcdInit();	//LCD初期化
@@ -196,10 +205,10 @@ int	main(void)
 	
 	//ノイズ低減を期待してADCのポートをプルアップしておく
 	DDRC	= 0b00000000;	//portC全部入力方向
-	PORTC	= ~((1 << PC0) | (1 << PC1));	//使用するADC入力ピン以外をプルアップ
+	PORTC	= ~((1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3));	//使用するADC入力ピン以外をプルアップ
 	
 	//消費電力削減のためADC使用ピンをデジタル入力禁止にする（ADC入力（アナログ）専用となる）
-	DIDR0 |= (1 << ADC0D) | (1 << ADC1D);	//PC0,PC1
+	DIDR0 |= (1 << ADC0D) | (1 << ADC1D) | (1 << ADC2D) | (1 << ADC3D);	//PC0,PC1,PC2,PC3
 	
 	//ADC動作設定
 	ADCSRA = 0b10000100		//bit2-0: 100 = 16分周	1MHz/16=62.5kHz (50k～200kHzであること)
@@ -215,11 +224,13 @@ int	main(void)
 	adcValue = ADC;	//値の読み捨て
 	
 	idx = 0;
+	idx2 = 0;
 	while(1)
 	{
+		//=====      Ch1       ==============================================================================
 		//===== 電圧を測定する =====
 		ADMUX =	ADC_SET_VOLTAGE;
-		_delay_ms(10);	//安定待ち
+		_delay_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 		
 		adcVoltages[idx] = ADC;
@@ -233,15 +244,15 @@ int	main(void)
 		//テスターでの実測値と比較して、計算値はF_VREFを中心に約1％ずれていたので補正する。
 		//・計算値がF_VREFより大きいとき、その値は実測値より約1％大きかった。
 		//・計算値がF_VREFより小さいとき、その値は実測値より約1％小さかった。
-		fv -= (fv - F_VREF * 1000) * 0.01;	//fvはmV単位であることに注意
+		//fv -= (fv - F_VREF * 1000) * 0.01;	//fvはmV単位であることに注意
 		
 		//電圧を表示する
 		mVoltage = (uint16_t)fv;
-		lcdPutVoltage(mVoltage);
+		lcdPutVoltage(mVoltage, 0);
 		
 		//===== 電流を測定する =====
 		ADMUX =	ADC_SET_CURRENT;
-		_delay_ms(10);	//安定待ち
+		_delay_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 		
 		adcCurrents[idx] = ADC;
@@ -253,10 +264,52 @@ int	main(void)
 		
 		//電流を表示する
 		mCurrent = (uint16_t)(fa * 10.0);	//0.1mA単位
-		lcdPutCurrent(mCurrent);
+		lcdPutCurrent(mCurrent, 0);
 		
 		//次のループの準備
 		if (++idx == BUFSIZE) idx = 0;
+		
+		//=====      Ch2       =============================================================================
+		//===== 電圧を測定する =====
+		ADMUX =	ADC_SET_VOLTAGE2;
+		_delay_ms(5);	//安定待ち
+		sleep_mode();	//スリープモード突入…変換中…変換完了
+				
+		adcVoltages2[idx2] = ADC;
+		adcValue = total(adcVoltages2);
+				
+		//A/D変換値から電圧を求める
+		fv = ((float)adcValue / BUFSIZE) * (F_VREF * 1000) / 1024;	//mV単位
+		fv *= (F_VMETER_RA + F_VMETER_RB) / F_VMETER_RA;	//分圧している値から本来の電圧を求める
+		//ここでfv=F_VREFとした値が測定可能な上限値である
+		//補正
+		//テスターでの実測値と比較して、計算値はF_VREFを中心に約1％ずれていたので補正する。
+		//・計算値がF_VREFより大きいとき、その値は実測値より約1％大きかった。
+		//・計算値がF_VREFより小さいとき、その値は実測値より約1％小さかった。
+		//fv -= (fv - F_VREF * 1000) * 0.01;	//fvはmV単位であることに注意
+				
+		//電圧を表示する
+		mVoltage = (uint16_t)fv;
+		lcdPutVoltage(mVoltage, 1);
+				
+		//===== 電流を測定する =====
+		ADMUX =	ADC_SET_CURRENT2;
+		_delay_ms(5);	//安定待ち
+		sleep_mode();	//スリープモード突入…変換中…変換完了
+				
+		adcCurrents2[idx2] = ADC;
+		adcValue = total(adcCurrents2);
+				
+		//A/D変換値から電圧を求め、電流を算出する
+		fv = ((float)adcValue / BUFSIZE) * (F_VREF * 1000) / 1024;	//mV単位
+		fa = fv / F_SHUNT_R;	//mA単位
+				
+		//電流を表示する
+		mCurrent = (uint16_t)(fa * 10.0);	//0.1mA単位
+		lcdPutCurrent(mCurrent, 1);
+				
+		//次のループの準備
+		if (++idx2 == BUFSIZE) idx2 = 0;
 	}
 	
 	return 0;
