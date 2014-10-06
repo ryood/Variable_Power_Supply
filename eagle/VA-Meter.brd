@@ -1914,9 +1914,11 @@ design rules under a new name.</description>
 <contactref element="R6" pad="1"/>
 <contactref element="VR1" pad="C"/>
 <contactref element="GND" pad="3"/>
-<wire x1="-19.05" y1="60.96" x2="-24.13" y2="66.04" width="0" layer="19" extent="1-1"/>
+<contactref element="VR1" pad="R"/>
+<wire x1="-21.59" y1="60.96" x2="-24.13" y2="66.04" width="0" layer="19" extent="1-1"/>
+<wire x1="-19.05" y1="60.96" x2="-21.59" y2="60.96" width="0" layer="19" extent="1-1"/>
 <wire x1="-34.29" y1="66.04" x2="-24.13" y2="66.04" width="0" layer="19" extent="1-1"/>
-<wire x1="-29.21" y1="39.37" x2="-19.05" y2="60.96" width="0" layer="19" extent="1-1"/>
+<wire x1="-29.21" y1="39.37" x2="-21.59" y2="60.96" width="0" layer="19" extent="1-1"/>
 <wire x1="-46.99" y1="39.37" x2="-29.21" y2="39.37" width="0" layer="19" extent="1-1"/>
 <wire x1="-16.51" y1="6.985" x2="-29.21" y2="39.37" width="0" layer="19" extent="1-1"/>
 </signal>
@@ -2006,7 +2008,6 @@ design rules under a new name.</description>
 <contactref element="VR1" pad="A"/>
 <contactref element="R8" pad="2"/>
 <contactref element="IC2" pad="2"/>
-<contactref element="VR1" pad="R"/>
 <contactref element="C2" pad="-"/>
 <contactref element="C3" pad="-"/>
 <contactref element="IC1" pad="8"/>
@@ -2020,9 +2021,8 @@ design rules under a new name.</description>
 <wire x1="-45.72" y1="54.61" x2="-38.1" y2="54.61" width="0" layer="19" extent="1-1"/>
 <wire x1="-44.45" y1="46.99" x2="-45.72" y2="54.61" width="0" layer="19" extent="1-1"/>
 <wire x1="-44.45" y1="66.04" x2="-45.72" y2="54.61" width="0" layer="19" extent="1-1"/>
-<wire x1="-21.59" y1="60.96" x2="-38.1" y2="54.61" width="0" layer="19" extent="1-1"/>
-<wire x1="-20.32" y1="62.865" x2="-21.59" y2="60.96" width="0" layer="19" extent="1-1"/>
-<wire x1="-13.97" y1="46.99" x2="-21.59" y2="60.96" width="0" layer="19" extent="1-1"/>
+<wire x1="-20.32" y1="62.865" x2="-38.1" y2="54.61" width="0" layer="19" extent="1-1"/>
+<wire x1="-13.97" y1="46.99" x2="-20.32" y2="62.865" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="V+">
 <contactref element="L1" pad="2"/>
