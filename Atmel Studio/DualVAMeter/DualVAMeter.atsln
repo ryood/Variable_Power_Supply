@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "DualVAMeter", "DualVAMeter\DualVAMeter.cproj", "{F429EBF9-A85C-4AC3-B3BA-4EA135AD8960}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F429EBF9-A85C-4AC3-B3BA-4EA135AD8960}.Debug|AVR.ActiveCfg = Debug|AVR
+		{F429EBF9-A85C-4AC3-B3BA-4EA135AD8960}.Debug|AVR.Build.0 = Debug|AVR
+		{F429EBF9-A85C-4AC3-B3BA-4EA135AD8960}.Release|AVR.ActiveCfg = Release|AVR
+		{F429EBF9-A85C-4AC3-B3BA-4EA135AD8960}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
