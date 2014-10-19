@@ -6,11 +6,11 @@
  */ 
 
 
-//	ATmega329P
+//	ATmega328P
 //	LM317/LM337使用 可変電圧源（簡易電圧計・簡易電流計付き）
 
 /*
-ポート対応	[ATmega88]	x:存在しない(PC6はRESET) -:空き
+ポート対応	[ATmega328P]	x:存在しない(PC6はRESET) -:空き
 bit		7	6	5	4	3	2	1	0
 portB	-	-	-	-	-	-	-	CKO		PB0:システムクロック出力
 portC	x	x	SCL	SDA	A-M	V-M	A+M	V+M		I2C(PC5:クロック PC4:データ) ADC(PC3..0 電流電圧計)
@@ -230,7 +230,7 @@ void lcdInit()
 	wait_ms(2);			 // Clear Displayは追加ウェイトが必要
 }
 
-#define lcdSetPos(x,y)	i2c_cmd(0b10000000+40*(y)+x)
+#define lcdSetPos(x,y)	i2c_cmd(0b10000000+0x40*(y)+(x))
 #define lcdPutChar(c)	i2c_data(c)
 #define lcdPutStr(s)	i2c_puts(s)
 
@@ -251,6 +251,13 @@ void	lcdPutUInt(uint16_t n)
 	lcdPutChar('0' + kbuf[--i]);
 }
 
+//LCDの表示を1行消去する
+void	lcdLineClear(uint8_t y)
+{
+	lcdSetPos(0, y);
+	lcdPutStr("        ");	//8桁
+}
+
 /*/////////////////////////////////////////////////////////////////////////////
  *
  * 電圧・電流の表示
@@ -263,6 +270,8 @@ void	lcdPutVoltage(uint16_t mValue, int pos)
 {
 	uint16_t	num, dec;
 
+	if (pos == 0)
+		lcdLineClear(VOLTAGE_Y);
 	lcdSetPos(VOLTAGE_X + pos*8, VOLTAGE_Y);	
 	if (pos == 1)
 		lcdPutChar('-');
@@ -291,7 +300,7 @@ void	lcdPutVoltage(uint16_t mValue, int pos)
 		lcdPutUInt(dec / 1000);
 	}
 	
-	lcdPutStr("V");
+	lcdPutStr(" V");
 }
 
 //電流を表示する
@@ -300,6 +309,8 @@ void	lcdPutCurrent(uint16_t mValue, int pos)
 {
 	uint16_t	num, dec;
 	
+	if (pos == 0)
+		lcdLineClear(CURRENT_Y);
 	lcdSetPos(CURRENT_X + pos*8, CURRENT_Y);
 	if (pos == 1)
 		lcdPutChar('-');
@@ -323,7 +334,7 @@ void	lcdPutCurrent(uint16_t mValue, int pos)
 			lcdPutUInt(num);
 	}
 	
-	lcdPutStr("mA");
+	lcdPutStr(" mA");
 }
 
 //バッファの値を合計する
@@ -333,6 +344,12 @@ uint16_t	total(uint16_t values[])
 	uint16_t	n = 0UL;
 	for (i = 0; i < BUFSIZE; i++) n += values[i];
 	return n;
+}
+
+//A/D変換スリープからの復帰
+ISR(ADC_vect)
+{
+	//処理なし
 }
 
 //ADMUXに設定する基準電圧と入力ピンの内容
@@ -376,40 +393,37 @@ int main(void)
 	lcdSetPos(0, CURRENT_Y);	lcdPutStr("Current @@");
 	wait_sec(3);
 	
+	//消費電力削減のためADC使用ピンをデジタル入力禁止にする（ADC入力（アナログ）専用となる）
+	DIDR0 |= (1 << ADC0D) | (1 << ADC1D) | (1 << ADC2D) | (1 << ADC3D);	//PC0,PC1,PC2,PC3
+	
 	//ADC動作設定
-	ADCSRA = 0b10000110		//bit2-0: 101 = 64分周	8MHz/64=125kHz (50k～200kHzであること)
+	ADCSRA = 0b10000110		//bit2-0: 110 = 64分周	8MHz/64=125kHz (50k～200kHzであること)
 		| (1 << ADIE);		//割り込み許可（スリープ対応）
 	
 	//ADCの基準電圧と入力ピンを設定する
 	ADMUX =	ADC_SET_PVOLTAGE;
 
-/*	
+	
 	//A/D変換ノイズ低減のスリープモードを設定する
 	set_sleep_mode(SLEEP_MODE_ADC);
 	sei();			//割り込み許可
 	sleep_mode();	//A/Dコンバータ初期化として初回変換開始…変換中…変換完了
 	adcValue = ADC;	//値の読み捨て
-*/
 
-	lcdPutVoltage(15000, 0);
-	lcdPutCurrent(5000, 0);
-	lcdPutVoltage(15000, 1);
-	lcdPutCurrent(5000, 1);
-	
 	idx = 0;
 	idx2 = 0;
 	
     while(1)
     {
-#if 0
-        //===== 正電源         ==============================================================================
+        //===== 正電源 ==============================================================================
 		//
 		
 		//===== 電圧を測定する =====
+		//
 		ADMUX =	ADC_SET_PVOLTAGE;
 		wait_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
-			
+		
 		adcPVoltages[idx] = ADC;
 		adcValue = total(adcPVoltages);
 			
@@ -428,6 +442,7 @@ int main(void)
 		lcdPutVoltage(mVoltage, 0);
 					
 		//===== 電流を測定する =====
+		//
 		ADMUX =	ADC_SET_PCURRENT;
 		wait_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
@@ -446,10 +461,11 @@ int main(void)
 		//次のループの準備
 		if (++idx == BUFSIZE) idx = 0;
 			
-		//===== 負電源         =============================================================================
+		//===== 負電源 =============================================================================
 		//
 		
 		//===== 電圧を測定する =====
+		//
 		ADMUX =	ADC_SET_NVOLTAGE;
 		wait_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
@@ -472,6 +488,7 @@ int main(void)
 		lcdPutVoltage(mVoltage, 1);
 			
 		//===== 電流を測定する =====
+		//
 		ADMUX =	ADC_SET_NCURRENT;
 		wait_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
@@ -489,7 +506,6 @@ int main(void)
 			
 		//次のループの準備
 		if (++idx2 == BUFSIZE) idx2 = 0;
-#endif
     }
 	
 	return 0;
