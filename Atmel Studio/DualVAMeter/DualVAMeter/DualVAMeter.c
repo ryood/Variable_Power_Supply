@@ -445,6 +445,7 @@ int main(void)
 		//電圧を表示する
 		mVoltage = (uint16_t)fv;
 		//lcdPutVoltage(mVoltage, 0);
+		lcdLineClear(0, 0);
 		lcdSetPos(0, 0);
 		lcdPutUInt(adcPVoltages[idx]);
 					
@@ -463,7 +464,10 @@ int main(void)
 			
 		//電流を表示する
 		mCurrent = (uint16_t)(fa * 10.0);	//0.1mA単位
-		lcdPutCurrent(mCurrent, 0);
+		//lcdPutCurrent(mCurrent, 0);
+		lcdLineClear(0, 1);
+		lcdSetPos(8, 0);
+		lcdPutUInt(adcPCurrents[idx]);
 			
 		//===== 負電源 =============================================================================
 		//
@@ -490,7 +494,8 @@ int main(void)
 		//電圧を表示する
 		mVoltage = (uint16_t)fv;
 		//lcdPutVoltage(mVoltage, 1);
-		lcdSetPos(8, 0);
+		lcdLineClear(1, 0);
+		lcdSetPos(0, 1);
 		lcdPutUInt(adcNVoltages[idx]);
 			
 		//===== 電流を測定する =====
@@ -508,7 +513,10 @@ int main(void)
 			
 		//電流を表示する
 		mCurrent = (uint16_t)(fa * 10.0);	//0.1mA単位
-		lcdPutCurrent(mCurrent, 1);
+		//lcdPutCurrent(mCurrent, 1);
+		lcdLineClear(1, 1);
+		lcdSetPos(8, 1);
+		lcdPutUInt(adcNCurrents[idx]);
 			
 		//次のループの準備
 		if (++idx == BUFSIZE) idx = 0;
