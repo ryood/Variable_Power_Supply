@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -12485,34 +12485,41 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 Grid 5.08 mm&lt;p&gt;
 &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
 <packages>
-<package name="W237-132">
+<package name="W237-133">
 <description>&lt;b&gt;WAGO SREW CLAMP&lt;/b&gt;</description>
-<wire x1="-3.5306" y1="-1.651" x2="-1.524" y2="0.3556" width="0.254" layer="51"/>
-<wire x1="1.6256" y1="-1.6764" x2="3.5306" y2="0.3556" width="0.254" layer="51"/>
-<wire x1="-5.08" y1="4.191" x2="5.08" y2="4.191" width="0.1524" layer="21"/>
-<wire x1="5.08" y1="-4.826" x2="5.08" y2="-2.413" width="0.1524" layer="21"/>
-<wire x1="5.08" y1="-4.826" x2="-5.08" y2="-4.826" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="4.191" x2="-5.08" y2="-2.413" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="-2.413" x2="-3.429" y2="-2.413" width="0.1524" layer="21"/>
-<wire x1="-3.429" y1="-2.413" x2="-1.651" y2="-2.413" width="0.1524" layer="51"/>
-<wire x1="-1.651" y1="-2.413" x2="1.651" y2="-2.413" width="0.1524" layer="21"/>
-<wire x1="3.429" y1="-2.413" x2="5.08" y2="-2.413" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="-2.413" x2="-5.08" y2="-4.826" width="0.1524" layer="21"/>
-<wire x1="5.08" y1="-2.413" x2="5.08" y2="4.191" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="4.191" x2="-5.08" y2="4.445" width="0.1524" layer="21"/>
-<wire x1="-5.08" y1="4.445" x2="5.08" y2="4.445" width="0.1524" layer="21"/>
-<wire x1="5.08" y1="4.191" x2="5.08" y2="4.445" width="0.1524" layer="21"/>
-<wire x1="1.651" y1="-2.413" x2="3.429" y2="-2.413" width="0.1524" layer="51"/>
-<circle x="-2.54" y="-0.635" radius="1.4986" width="0.1524" layer="51"/>
-<circle x="-2.54" y="2.8448" radius="0.508" width="0.1524" layer="21"/>
-<circle x="2.54" y="-0.635" radius="1.4986" width="0.1524" layer="51"/>
-<circle x="2.54" y="2.8448" radius="0.508" width="0.1524" layer="21"/>
-<pad name="1" x="-2.54" y="-0.635" drill="1.1938" shape="long" rot="R90"/>
-<pad name="2" x="2.54" y="-0.635" drill="1.1938" shape="long" rot="R90"/>
-<text x="-4.445" y="1.27" size="1.27" layer="51" ratio="10">1</text>
-<text x="0.6858" y="1.2192" size="1.27" layer="51" ratio="10">2</text>
-<text x="-3.81" y="-6.985" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
-<text x="-3.81" y="-4.318" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<wire x1="-6.0706" y1="-1.651" x2="-4.064" y2="0.3556" width="0.254" layer="51"/>
+<wire x1="-0.9144" y1="-1.6764" x2="0.9906" y2="0.3556" width="0.254" layer="51"/>
+<wire x1="4.1656" y1="-1.6002" x2="5.969" y2="0.3556" width="0.254" layer="51"/>
+<wire x1="-7.62" y1="-4.826" x2="7.62" y2="-4.826" width="0.1524" layer="21"/>
+<wire x1="7.62" y1="4.191" x2="7.62" y2="-2.413" width="0.1524" layer="21"/>
+<wire x1="7.62" y1="4.191" x2="-7.62" y2="4.191" width="0.1524" layer="21"/>
+<wire x1="-7.62" y1="-4.826" x2="-7.62" y2="-2.413" width="0.1524" layer="21"/>
+<wire x1="-7.62" y1="4.191" x2="-7.62" y2="4.445" width="0.1524" layer="21"/>
+<wire x1="-7.62" y1="4.445" x2="7.62" y2="4.445" width="0.1524" layer="21"/>
+<wire x1="7.62" y1="4.191" x2="7.62" y2="4.445" width="0.1524" layer="21"/>
+<wire x1="-7.62" y1="-2.413" x2="-5.969" y2="-2.413" width="0.1524" layer="21"/>
+<wire x1="-5.969" y1="-2.413" x2="-4.191" y2="-2.413" width="0.1524" layer="51"/>
+<wire x1="-4.191" y1="-2.413" x2="-0.889" y2="-2.413" width="0.1524" layer="21"/>
+<wire x1="0.889" y1="-2.413" x2="4.191" y2="-2.413" width="0.1524" layer="21"/>
+<wire x1="5.969" y1="-2.413" x2="7.62" y2="-2.413" width="0.1524" layer="21"/>
+<wire x1="-7.62" y1="-2.413" x2="-7.62" y2="4.191" width="0.1524" layer="21"/>
+<wire x1="7.62" y1="-2.413" x2="7.62" y2="-4.826" width="0.1524" layer="21"/>
+<wire x1="-0.889" y1="-2.413" x2="0.889" y2="-2.413" width="0.1524" layer="51"/>
+<wire x1="4.191" y1="-2.413" x2="5.969" y2="-2.413" width="0.1524" layer="51"/>
+<circle x="-5.08" y="-0.635" radius="1.4986" width="0.1524" layer="51"/>
+<circle x="5.08" y="-0.635" radius="1.4986" width="0.1524" layer="51"/>
+<circle x="-5.08" y="2.8448" radius="0.508" width="0.1524" layer="21"/>
+<circle x="5.08" y="2.8448" radius="0.508" width="0.1524" layer="21"/>
+<circle x="0" y="-0.635" radius="1.4986" width="0.1524" layer="51"/>
+<circle x="0" y="2.8448" radius="0.508" width="0.1524" layer="21"/>
+<pad name="1" x="-5.08" y="-0.635" drill="1.1938" shape="long" rot="R90"/>
+<pad name="2" x="0" y="-0.635" drill="1.1938" shape="long" rot="R90"/>
+<pad name="3" x="5.08" y="-0.635" drill="1.1938" shape="long" rot="R90"/>
+<text x="-6.985" y="1.27" size="1.27" layer="51" ratio="10">1</text>
+<text x="-1.8542" y="1.2192" size="1.27" layer="51" ratio="10">2</text>
+<text x="3.2258" y="1.27" size="1.27" layer="51" ratio="10">3</text>
+<text x="-6.604" y="-4.318" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<text x="-6.985" y="-6.858" size="1.27" layer="25" ratio="10">&gt;NAME</text>
 </package>
 </packages>
 <symbols>
@@ -12531,17 +12538,19 @@ Grid 5.08 mm&lt;p&gt;
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="W237-02P" prefix="X" uservalue="yes">
+<deviceset name="W237-03P" prefix="X" uservalue="yes">
 <description>&lt;b&gt;WAGO SREW CLAMP&lt;/b&gt;</description>
 <gates>
 <gate name="-1" symbol="KL" x="0" y="0" addlevel="always"/>
-<gate name="-2" symbol="KL+V" x="0" y="-5.08" addlevel="always"/>
+<gate name="-2" symbol="KL" x="0" y="-5.08" addlevel="always"/>
+<gate name="-3" symbol="KL+V" x="0" y="-10.16" addlevel="always"/>
 </gates>
 <devices>
-<device name="" package="W237-132">
+<device name="" package="W237-133">
 <connects>
 <connect gate="-1" pin="KL" pad="1"/>
 <connect gate="-2" pin="KL" pad="2"/>
+<connect gate="-3" pin="KL" pad="3"/>
 </connects>
 <technologies>
 <technology name="">
@@ -16471,7 +16480,6 @@ DIN A4, landscape with location and doc. field</description>
 <part name="SUPPLY4" library="supply2" deviceset="GND" device=""/>
 <part name="C2" library="rcl" deviceset="CPOL-EU" device="E2.5-5" value="10u"/>
 <part name="C3" library="rcl" deviceset="CPOL-EU" device="E2.5-6" value="100u"/>
-<part name="V-IN" library="con-wago-508" deviceset="W237-02P" device=""/>
 <part name="D1" library="diode" deviceset="SCHOTTKY-DIODE" device="DO35-7" value="1S2"/>
 <part name="D2" library="diode" deviceset="ZENER-DIODE" device="ZD-5" value="3.6V"/>
 <part name="R2" library="rcl" deviceset="R-EU_" device="0204/7" value="220"/>
@@ -16486,6 +16494,8 @@ DIN A4, landscape with location and doc. field</description>
 <part name="PF1" library="polyswitch" deviceset="PTC-" device="PF-5.1"/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="JP1" library="pinhead" deviceset="PINHD-2X3" device=""/>
+<part name="V-IN" library="con-wago-508" deviceset="W237-03P" device=""/>
+<part name="SUPPLY1" library="supply2" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -16497,8 +16507,6 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="SUPPLY4" gate="GND" x="22.86" y="53.34"/>
 <instance part="C2" gate="G$1" x="53.34" y="58.42"/>
 <instance part="C3" gate="G$1" x="99.06" y="58.42"/>
-<instance part="V-IN" gate="-1" x="-20.32" y="71.12"/>
-<instance part="V-IN" gate="-2" x="-20.32" y="58.42"/>
 <instance part="D1" gate="G$1" x="76.2" y="83.82" rot="R180"/>
 <instance part="D2" gate="G$1" x="111.76" y="50.8" rot="R90"/>
 <instance part="R2" gate="G$1" x="111.76" y="66.04" rot="R90"/>
@@ -16519,9 +16527,13 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="R7" gate="G$1" x="22.86" y="38.1" rot="R90"/>
 <instance part="R11" gate="G$1" x="15.24" y="38.1" rot="R90"/>
 <instance part="PF2" gate="G$1" x="-5.08" y="71.12"/>
-<instance part="PF1" gate="G$1" x="-5.08" y="58.42"/>
+<instance part="PF1" gate="G$1" x="-5.08" y="45.72"/>
 <instance part="FRAME1" gate="G$1" x="-55.88" y="-30.48"/>
 <instance part="JP1" gate="A" x="139.7" y="58.42"/>
+<instance part="V-IN" gate="-1" x="-20.32" y="71.12"/>
+<instance part="V-IN" gate="-2" x="-20.32" y="58.42"/>
+<instance part="V-IN" gate="-3" x="-20.32" y="45.72"/>
+<instance part="SUPPLY1" gate="GND" x="-10.16" y="55.88"/>
 </instances>
 <busses>
 </busses>
@@ -16537,6 +16549,11 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="40.64" y1="60.96" x2="40.64" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="60.96" x2="30.48" y2="60.96" width="0.1524" layer="91"/>
 <junction x="30.48" y="60.96"/>
+</segment>
+<segment>
+<pinref part="V-IN" gate="-2" pin="KL"/>
+<pinref part="SUPPLY1" gate="GND" pin="GND"/>
+<wire x1="-10.16" y1="58.42" x2="-15.24" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="+15V" class="0">
@@ -16561,7 +16578,7 @@ DIN A4, landscape with location and doc. field</description>
 </net>
 <net name="-15V" class="0">
 <segment>
-<label x="-15.24" y="58.42" size="1.778" layer="95"/>
+<label x="-15.24" y="45.72" size="1.778" layer="95"/>
 <pinref part="R8" gate="G$1" pin="1"/>
 <wire x1="30.48" y1="33.02" x2="30.48" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="R11" gate="G$1" pin="1"/>
@@ -16573,9 +16590,9 @@ DIN A4, landscape with location and doc. field</description>
 <junction x="22.86" y="30.48"/>
 <wire x1="15.24" y1="30.48" x2="5.08" y2="30.48" width="0.1524" layer="91"/>
 <junction x="15.24" y="30.48"/>
-<wire x1="5.08" y1="30.48" x2="5.08" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="30.48" x2="5.08" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="PF1" gate="G$1" pin="2"/>
-<wire x1="0" y1="58.42" x2="5.08" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="0" y1="45.72" x2="5.08" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -16604,16 +16621,16 @@ DIN A4, landscape with location and doc. field</description>
 </net>
 <net name="N$6" class="0">
 <segment>
-<pinref part="V-IN" gate="-1" pin="KL"/>
 <pinref part="PF2" gate="G$1" pin="1"/>
 <wire x1="-15.24" y1="71.12" x2="-10.16" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="V-IN" gate="-1" pin="KL"/>
 </segment>
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="V-IN" gate="-2" pin="KL"/>
 <pinref part="PF1" gate="G$1" pin="1"/>
-<wire x1="-15.24" y1="58.42" x2="-10.16" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="-15.24" y1="45.72" x2="-10.16" y2="45.72" width="0.1524" layer="91"/>
+<pinref part="V-IN" gate="-3" pin="KL"/>
 </segment>
 </net>
 <net name="5V" class="0">
