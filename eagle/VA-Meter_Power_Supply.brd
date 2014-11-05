@@ -68,7 +68,7 @@
 <wire x1="66.04" y1="5.08" x2="66.04" y2="40.64" width="0" layer="20"/>
 <wire x1="66.04" y1="40.64" x2="5.08" y2="40.64" width="0" layer="20"/>
 <wire x1="5.08" y1="40.64" x2="5.08" y2="5.08" width="0" layer="20"/>
-<polygon width="0" layer="39">
+<polygon width="0" layer="39" pour="hatch">
 <vertex x="22.86" y="15.24"/>
 <vertex x="22.86" y="0"/>
 <vertex x="48.26" y="0"/>
@@ -78,7 +78,7 @@
 <vertex x="25.4" y="10.16"/>
 <vertex x="25.4" y="15.24"/>
 </polygon>
-<polygon width="0" layer="39">
+<polygon width="0" layer="39" pour="hatch">
 <vertex x="22.86" y="25.4"/>
 <vertex x="22.86" y="45.72"/>
 <vertex x="48.26" y="45.72"/>
