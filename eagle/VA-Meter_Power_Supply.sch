@@ -16478,9 +16478,9 @@ DIN A4, landscape with location and doc. field</description>
 <part name="IC2" library="linear" deviceset="78*" device="TV" technology="05"/>
 <part name="R8" library="rcl" deviceset="R-EU_" device="0207/7" value="1.5k"/>
 <part name="SUPPLY4" library="supply2" deviceset="GND" device=""/>
-<part name="C2" library="rcl" deviceset="CPOL-EU" device="E2.5-5" value="10u"/>
+<part name="C2" library="rcl" deviceset="CPOL-EU" device="E2.5-5" value="47u"/>
 <part name="C3" library="rcl" deviceset="CPOL-EU" device="E2.5-6" value="100u"/>
-<part name="D1" library="diode" deviceset="SCHOTTKY-DIODE" device="DO35-7" value="1S2"/>
+<part name="D1" library="diode" deviceset="SCHOTTKY-DIODE" device="DO35-7" value="1S4"/>
 <part name="D2" library="diode" deviceset="ZENER-DIODE" device="ZD-5" value="3.6V"/>
 <part name="R2" library="rcl" deviceset="R-EU_" device="0204/7" value="220"/>
 <part name="C6" library="rcl" deviceset="C-EU" device="050-024X044" value="0.1u"/>
