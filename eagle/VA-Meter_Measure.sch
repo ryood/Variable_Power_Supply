@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -8224,7 +8224,9 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="JP3" gate="G$1" x="71.12" y="55.88" rot="R180"/>
 <instance part="R4" gate="G$1" x="83.82" y="55.88"/>
 <instance part="P+1" gate="1" x="93.98" y="55.88" rot="R270"/>
-<instance part="P-6" gate="1" x="83.82" y="48.26"/>
+<instance part="P-6" gate="1" x="83.82" y="48.26" smashed="yes">
+<attribute name="VALUE" x="86.36" y="48.26" size="1.778" layer="96"/>
+</instance>
 <instance part="C5" gate="G$1" x="162.56" y="109.22" smashed="yes" rot="R270">
 <attribute name="NAME" x="162.941" y="107.696" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="162.941" y="115.316" size="1.778" layer="96" rot="R270"/>
@@ -8312,7 +8314,7 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="73.66" y1="134.62" x2="83.82" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="SCL" class="0">
+<net name="SDA" class="0">
 <segment>
 <wire x1="73.66" y1="83.82" x2="96.52" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="83.82" x2="96.52" y2="106.68" width="0.1524" layer="91"/>
@@ -8322,7 +8324,7 @@ DIN A4, landscape with location and doc. field</description>
 <pinref part="JP1" gate="A" pin="3"/>
 </segment>
 </net>
-<net name="SDA" class="0">
+<net name="SCL" class="0">
 <segment>
 <wire x1="73.66" y1="86.36" x2="93.98" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="86.36" x2="93.98" y2="104.14" width="0.1524" layer="91"/>
