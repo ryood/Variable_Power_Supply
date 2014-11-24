@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -6475,6 +6475,7 @@ DIN A4, landscape with location and doc. field</description>
 <part name="SUPPLY7" library="supply2" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" deviceset="V+" device=""/>
 <part name="P-2" library="supply1" deviceset="V-" device=""/>
+<part name="SUPPLY8" library="supply2" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -6524,6 +6525,7 @@ DIN A4, landscape with location and doc. field</description>
 <instance part="P-2" gate="1" x="185.42" y="68.58" smashed="yes">
 <attribute name="VALUE" x="181.102" y="68.58" size="1.778" layer="96"/>
 </instance>
+<instance part="SUPPLY8" gate="GND" x="170.18" y="119.38"/>
 </instances>
 <busses>
 </busses>
@@ -6577,6 +6579,12 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="195.58" y1="83.82" x2="185.42" y2="83.82" width="0.1524" layer="91"/>
 <junction x="185.42" y="83.82"/>
 </segment>
+<segment>
+<pinref part="SUPPLY8" gate="GND" pin="GND"/>
+<wire x1="170.18" y1="121.92" x2="170.18" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="A" pin="2"/>
+<wire x1="170.18" y1="129.54" x2="187.96" y2="129.54" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="MEAS-" class="0">
 <segment>
@@ -6616,7 +6624,7 @@ DIN A4, landscape with location and doc. field</description>
 <label x="175.26" y="127" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="GND+" class="0">
+<net name="NC" class="0">
 <segment>
 <pinref part="R5" gate="G$1" pin="2"/>
 <wire x1="81.28" y1="88.9" x2="106.68" y2="88.9" width="0.1524" layer="91"/>
@@ -6627,7 +6635,7 @@ DIN A4, landscape with location and doc. field</description>
 <junction x="106.68" y="88.9"/>
 </segment>
 </net>
-<net name="GND-" class="0">
+<net name="GIN" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
 <pinref part="GND" gate="-2" pin="KL"/>
@@ -6703,21 +6711,7 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="129.54" y1="58.42" x2="132.08" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="A+M" class="0">
-<segment>
-<wire x1="152.4" y1="129.54" x2="152.4" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="86.36" x2="152.4" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="129.54" x2="187.96" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="R7" gate="G$1" pin="2"/>
-<wire x1="142.24" y1="76.2" x2="152.4" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="IC2" gate="A" pin="OUT"/>
-<wire x1="147.32" y1="86.36" x2="152.4" y2="86.36" width="0.1524" layer="91"/>
-<junction x="152.4" y="86.36"/>
-<pinref part="JP1" gate="A" pin="2"/>
-<label x="175.26" y="129.54" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="A-M" class="0">
+<net name="IM" class="0">
 <segment>
 <wire x1="157.48" y1="60.96" x2="157.48" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="157.48" y1="124.46" x2="187.96" y2="124.46" width="0.1524" layer="91"/>
@@ -6729,6 +6723,15 @@ DIN A4, landscape with location and doc. field</description>
 <junction x="157.48" y="60.96"/>
 <pinref part="JP1" gate="A" pin="4"/>
 <label x="175.26" y="124.46" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="IC2" gate="A" pin="OUT"/>
+<wire x1="147.32" y1="86.36" x2="152.4" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="86.36" x2="152.4" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R7" gate="G$1" pin="2"/>
+<wire x1="142.24" y1="76.2" x2="152.4" y2="76.2" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
