@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.6.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -8389,7 +8389,7 @@ DIN A4, landscape with location and doc. field</description>
 <label x="78.74" y="116.84" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="A+MEAS" class="0">
+<net name="G_MEAS" class="0">
 <segment>
 <pinref part="JP2" gate="A" pin="2"/>
 <pinref part="IC1" gate="G$1" pin="PC1(ADC1)"/>
@@ -8405,7 +8405,7 @@ DIN A4, landscape with location and doc. field</description>
 <label x="78.74" y="111.76" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="A-MEAS" class="0">
+<net name="I_MEAS" class="0">
 <segment>
 <pinref part="IC1" gate="G$1" pin="PC3(ADC3)"/>
 <wire x1="73.66" y1="109.22" x2="101.6" y2="109.22" width="0.1524" layer="91"/>
