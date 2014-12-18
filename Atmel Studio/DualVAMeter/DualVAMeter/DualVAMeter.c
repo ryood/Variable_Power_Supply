@@ -13,7 +13,7 @@
 ポート対応	[ATmega328P]	x:存在しない(PC6はRESET) -:空き
 bit		7	6	5	4	3	2	1	0
 portB	-	-	-	-	-	-	-	CKO		PB0:システムクロック出力
-portC	x	x	SCL	SDA	A-M	V-M	A+M	V+M		I2C(PC5:クロック PC4:データ) ADC(PC3..0 電流電圧計)
+portC	x	x	SCL	SDA	IM	V-M	GND	V+M		I2C(PC5:クロック PC4:データ) ADC(PC3..0 電流電圧計)
 portD	-	-	-	-	-	RST	-	-		LCD		
 
 【ヒューズビット】 8MHzクロック
@@ -24,6 +24,7 @@ AtmelStudio 6.1		最適化オプション:-Os	数学ライブラリを追加:libm.a
 ATmega328P	8MHz（内蔵RC）
 
 履歴
+2014/12/18  電流電圧値,GND値を表示するように変更
 2014/10/19  テスト用に修正
 2014/10/16	by gizmo
 */
@@ -35,25 +36,32 @@ ATmega328P	8MHz（内蔵RC）
 #include <compat/twi.h>
 #include <avr/sleep.h>
 
-//Vref(V)
-#define	F_VREF	4.98	//AVCC
+//VCC(V)
+#define	F_VCC	5.09	//AVCC
 
 //電流測定用のシャント抵抗(Ω)
-#define	F_SHUNT_R	10.0
+#define	F_SHUNT_R	0.47
 
 //電圧測定用の分圧抵抗(kΩ)
-#define	F_VMETER_RA	100.0	//ADC入力点からGND側
-#define	F_VMETER_RB	300.0	//ADC入力点から回路側
+#define	F_VMETER_POSITIVE_RA	1.995	//ADC入力点からGND側
+#define	F_VMETER_POSITIVE_RB	9.956	//ADC入力点から回路側
+#define	F_VMETER_NEGATIVE_RA	1.997	//ADC入力点からGND側
+#define	F_VMETER_NEGATIVE_RB	9.909	//ADC入力点から回路側
+
+//電圧測定用の分圧比
+#define F_POSITIVE_V_RATE	(F_VMETER_POSITIVE_RA/(F_VMETER_POSITIVE_RA+F_VMETER_POSITIVE_RB))
+#define F_NEGATIVE_V_RATE	(F_VMETER_NEGATIVE_RA/(F_VMETER_NEGATIVE_RA+F_VMETER_NEGATIVE_RB))
+
+//電流値増幅用の抵抗(kΩ)
+#define F_CURRENT_AMP_RA	0.9891	//オペアンプの反転入力のGND側
+#define F_CURRENT_AMP_RB	9.886	//オペアンプの反転入力の出力側
+
+//電流値の増幅率
+#define F_CURRENT_AMP	((F_CURRENT_AMP_RA+F_CURRENT_AMP_RB)/F_CURRENT_AMP_RA)
 
 //バッファサイズ
 //total()の結果がオーバーフローしないよう60以下であること（10で十分）
 #define	BUFSIZE	10
-
-//表示位置
-#define	VOLTAGE_X	0
-#define	VOLTAGE_Y	0
-#define	CURRENT_X	0
-#define	CURRENT_Y	1
 
 // コントラストの設定
 unsigned char contrast = 0b110000;	// 3.0V時 数値を上げると濃くなります。
@@ -249,7 +257,7 @@ void	lcdPutUInt(uint16_t n)
 	while (0 < n);
 	
 	while (i != 0)
-	lcdPutChar('0' + kbuf[--i]);
+		lcdPutChar('0' + kbuf[--i]);
 }
 
 //LCDの表示をクリア
@@ -260,9 +268,9 @@ void lcdClear()
 }
 
 //LCDの表示を1行消去する
-void	lcdLineClear(uint8_t y, int pos)
+void	lcdLineClear(int x, int y)
 {
-	lcdSetPos(pos * 8, y);
+	lcdSetPos(x * 8, y);
 	lcdPutStr("        ");	//8桁
 }
 
@@ -272,19 +280,25 @@ void	lcdLineClear(uint8_t y, int pos)
  *
  */
 
+ #define abs(x)	((x)>=0?(x):-(x))
+ 
 //電圧を表示する
 //引数：	mV単位の値
-void	lcdPutVoltage(uint16_t mValue, int pos)
+void	lcdPutVoltage(int16_t mValue, int xPos, int yPos)
 {
-	uint16_t	num, dec;
+	uint16_t num, dec;
 
-	lcdLineClear(VOLTAGE_Y, pos);
-	lcdSetPos(VOLTAGE_X + pos*8, VOLTAGE_Y);	
-	if (pos == 1)
-		lcdPutChar('-');
+	lcdLineClear(xPos, yPos);
+	lcdSetPos(xPos * 8, yPos);	
 	
-	num = mValue / 1000;	//整数部
-	dec = mValue % 1000;	//小数部
+	// 符号の表示
+	if (mValue < 0)
+		lcdPutChar('-');
+	else
+		lcdPutChar(' ');
+		
+	num = abs(mValue) / 1000;	//整数部
+	dec = abs(mValue) % 1000;	//小数部
 	
 	//10mV未満は小数第2位まで表示（小数第3位以下は切り捨て）
 	//10mV以上は小数第1位まで表示（小数第2位以下は切り捨て）
@@ -297,7 +311,7 @@ void	lcdPutVoltage(uint16_t mValue, int pos)
 		//小数部3桁中2桁表示（3桁目は切り捨て）
 		dec /= 10;
 		if (dec < 10) lcdPutChar('0');
-			lcdPutUInt(dec);
+		lcdPutUInt(dec);
 	}
 	else
 	{
@@ -307,19 +321,23 @@ void	lcdPutVoltage(uint16_t mValue, int pos)
 		lcdPutUInt(dec / 1000);
 	}
 	
-	lcdPutStr(" V");
+	lcdPutStr("V");
 }
 
 //電流を表示する
 //引数：	0.1mA単位の値
-void	lcdPutCurrent(uint16_t mValue, int pos)
+void	lcdPutCurrent(int16_t mValue, int xPos, int yPos)
 {
 	uint16_t	num, dec;
 	
-	lcdLineClear(CURRENT_Y, pos);
-	lcdSetPos(CURRENT_X + pos*8, CURRENT_Y);
-	if (pos == 1)
+	lcdLineClear(xPos, yPos);
+	lcdSetPos(xPos * 8, yPos);
+	
+	// 符号の表示
+	if (mValue < 0)
 		lcdPutChar('-');
+	else
+		lcdPutChar(' ');
 	
 	num = mValue / 10;	//整数部
 	dec = mValue % 10;	//小数部
@@ -330,17 +348,17 @@ void	lcdPutCurrent(uint16_t mValue, int pos)
 	if (num < 100)
 	{
 		if (num < 10) lcdPutChar(' ');
-			lcdPutUInt(num);
+		lcdPutUInt(num);
 		lcdPutChar('.');
 		lcdPutUInt(dec);
 	}
 	else
 	{
 		if (num < 1000) lcdPutChar(' ');
-			lcdPutUInt(num);
+		lcdPutUInt(num);
 	}
 	
-	lcdPutStr(" mA");
+	lcdPutStr("mA");
 }
 
 //バッファの値を合計する
@@ -362,20 +380,21 @@ ISR(ADC_vect)
 //REFS0 -> 00:AREF, 01:AVCC, 11:内部基準1.1V
 //MUX0  -> 0111-0000:PC7-PC0, 1110:内部的に1.1Vを接続, 1111:内部的に0Vを接続
 #define	ADC_SET_PVOLTAGE	((0b01 << REFS0) | (0b0000 << MUX0))
-#define	ADC_SET_PCURRENT	((0b01 << REFS0) | (0b0001 << MUX0))
+#define	ADC_SET_GND			((0b01 << REFS0) | (0b0001 << MUX0))
 #define	ADC_SET_NVOLTAGE	((0b01 << REFS0) | (0b0010 << MUX0))
-#define	ADC_SET_NCURRENT	((0b01 << REFS0) | (0b0011 << MUX0))
+#define	ADC_SET_CURRENT		((0b01 << REFS0) | (0b0011 << MUX0))
 
 int main(void)
 {
 	uint16_t	adcPVoltages[BUFSIZE] = {0UL};
-	uint16_t	adcPCurrents[BUFSIZE] = {0UL};
 	uint16_t	adcNVoltages[BUFSIZE] = {0UL};
-	uint16_t	adcNCurrents[BUFSIZE] = {0UL};
+	uint16_t	adcCurrents[BUFSIZE] = {0UL};
+	uint16_t	adcGNDs[BUFSIZE] = {0UL};
+
 	uint16_t	adcValue;
-	uint16_t	mVoltage, mCurrent;
+	int16_t	gndValue;
+	int16_t	mVoltage, mCurrent;
 	uint8_t	idx;
-	uint8_t	idx2;
 	float	fv, fa;
 		
 	// ポートの初期化
@@ -395,8 +414,8 @@ int main(void)
 	lcdInit();
 	
 	//LCD初期表示
-	lcdSetPos(0, VOLTAGE_Y);	lcdPutStr("Voltage: + / -");
-	lcdSetPos(0, CURRENT_Y);	lcdPutStr("Current: + / -");
+	lcdSetPos(0, 0);	lcdPutStr("Volt + / Current");
+	lcdSetPos(0, 1);	lcdPutStr("Volt - / GND");
 	wait_sec(3);
 	
 	//消費電力削減のためADC使用ピンをデジタル入力禁止にする（ADC入力（アナログ）専用となる）
@@ -420,10 +439,22 @@ int main(void)
 	
     while(1)
     {
-        //===== 正電源 ==============================================================================
+		//===== GND電圧を測定する ===================================================
 		//
+		ADMUX =	ADC_SET_GND;
+		wait_ms(5);	//安定待ち
+		sleep_mode();	//スリープモード突入…変換中…変換完了
 		
-		//===== 電圧を測定する =====
+		adcGNDs[idx] = ADC;
+		adcValue = total(adcGNDs);
+		gndValue = (float)adcValue / BUFSIZE;
+		fv = gndValue * F_VCC * 1000 / 1024;	// mV単位
+		
+		//電圧を表示する
+		mVoltage = (int16_t)fv;
+		lcdPutVoltage(mVoltage, 1, 1);
+		
+        //===== 正電圧を測定する ===================================================
 		//
 		ADMUX =	ADC_SET_PVOLTAGE;
 		wait_ms(5);	//安定待ち
@@ -433,46 +464,13 @@ int main(void)
 		adcValue = total(adcPVoltages);
 			
 		//A/D変換値から電圧を求める
-		fv = ((float)adcValue / BUFSIZE) * (F_VREF * 1000) / 1024;	//mV単位
-		fv *= (F_VMETER_RA + F_VMETER_RB) / F_VMETER_RA;	//分圧している値から本来の電圧を求める
-		//ここでfv=F_VREFとした値が測定可能な上限値である
-		//補正
-		//テスターでの実測値と比較して、計算値はF_VREFを中心に約1％ずれていたので補正する。
-		//・計算値がF_VREFより大きいとき、その値は実測値より約1％大きかった。
-		//・計算値がF_VREFより小さいとき、その値は実測値より約1％小さかった。
-		//fv -= (fv - F_VREF * 1000) * 0.01;	//fvはmV単位であることに注意
+		fv = (((float)adcValue / BUFSIZE) - gndValue) * F_VCC * 1000 / (1024 * F_POSITIVE_V_RATE); // mV単位
 			
 		//電圧を表示する
-		mVoltage = (uint16_t)fv;
-		//lcdPutVoltage(mVoltage, 0);
-		lcdLineClear(0, 0);
-		lcdSetPos(0, 0);
-		lcdPutUInt(adcPVoltages[idx]);
+		mVoltage = (int16_t)fv;
+		lcdPutVoltage(mVoltage, 0, 0);
 					
-		//===== 電流を測定する =====
-		//
-		ADMUX =	ADC_SET_PCURRENT;
-		wait_ms(5);	//安定待ち
-		sleep_mode();	//スリープモード突入…変換中…変換完了
-			
-		adcPCurrents[idx] = ADC;
-		adcValue = total(adcPCurrents);
-			
-		//A/D変換値から電圧を求め、電流を算出する
-		fv = ((float)adcValue / BUFSIZE) * (F_VREF * 1000) / 1024;	//mV単位
-		fa = fv / F_SHUNT_R;	//mA単位
-			
-		//電流を表示する
-		mCurrent = (uint16_t)(fa * 10.0);	//0.1mA単位
-		//lcdPutCurrent(mCurrent, 0);
-		lcdLineClear(0, 1);
-		lcdSetPos(8, 0);
-		lcdPutUInt(adcPCurrents[idx]);
-			
-		//===== 負電源 =============================================================================
-		//
-		
-		//===== 電圧を測定する =====
+		//===== 負電圧を測定する ===================================================
 		//
 		ADMUX =	ADC_SET_NVOLTAGE;
 		wait_ms(5);	//安定待ち
@@ -482,47 +480,41 @@ int main(void)
 		adcValue = total(adcNVoltages);
 			
 		//A/D変換値から電圧を求める
-		fv = ((float)adcValue / BUFSIZE) * (F_VREF * 1000) / 1024;	//mV単位
-		fv *= (F_VMETER_RA + F_VMETER_RB) / F_VMETER_RA;	//分圧している値から本来の電圧を求める
-		//ここでfv=F_VREFとした値が測定可能な上限値である
-		//補正
-		//テスターでの実測値と比較して、計算値はF_VREFを中心に約1％ずれていたので補正する。
-		//・計算値がF_VREFより大きいとき、その値は実測値より約1％大きかった。
-		//・計算値がF_VREFより小さいとき、その値は実測値より約1％小さかった。
-		//fv -= (fv - F_VREF * 1000) * 0.01;	//fvはmV単位であることに注意
-			
+		fv = (((float)adcValue / BUFSIZE) - gndValue) * F_VCC * 1000 / (1024 * F_NEGATIVE_V_RATE); // mV単位
+					
 		//電圧を表示する
-		mVoltage = (uint16_t)fv;
-		//lcdPutVoltage(mVoltage, 1);
-		lcdLineClear(1, 0);
-		lcdSetPos(0, 1);
-		lcdPutUInt(adcNVoltages[idx]);
+		mVoltage = (int16_t)fv;
+		lcdPutVoltage(mVoltage, 0, 1);
 			
-		//===== 電流を測定する =====
+		//===== 電流を測定する ====================================================
 		//
-		ADMUX =	ADC_SET_NCURRENT;
+		ADMUX =	ADC_SET_CURRENT;
 		wait_ms(5);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 			
-		adcNCurrents[idx] = ADC;
-		adcValue = total(adcNCurrents);
-			
-		//A/D変換値から電圧を求め、電流を算出する
-		fv = ((float)adcValue / BUFSIZE) * (F_VREF * 1000) / 1024;	//mV単位
-		fa = fv / F_SHUNT_R;	//mA単位
-			
-		//電流を表示する
-		mCurrent = (uint16_t)(fa * 10.0);	//0.1mA単位
-		//lcdPutCurrent(mCurrent, 1);
-		lcdLineClear(1, 1);
-		lcdSetPos(8, 1);
-		lcdPutUInt(adcNCurrents[idx]);
-			
+		adcCurrents[idx] = ADC;
+		adcValue = total(adcCurrents);
+
+		// ADCの読み取り値が1000以上の場合測定不可とする
+		if ((float)adcValue / BUFSIZE < 1000) {
+	
+			//A/D変換値から電圧を求め、電流を算出する
+			fv = (((float)adcValue / BUFSIZE) - gndValue) * F_VCC * 1000 / (1024 * F_CURRENT_AMP); // mV単位
+			fa = fv / F_SHUNT_R;	//mA単位
+				
+			//電流を表示する
+			mCurrent = (int16_t)(fa * 10.0);	//0.1mA単位
+			lcdPutCurrent(mCurrent, 1, 0);
+		}
+		else {		
+			lcdLineClear(1, 0);
+			lcdSetPos(8, 0);
+			lcdPutStr("OVER");
+		}
+		
 		//次のループの準備
 		if (++idx == BUFSIZE) idx = 0;
-
     }
 	
 	return 0;
 }
-
