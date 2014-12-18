@@ -300,18 +300,23 @@ void	lcdPutVoltage(int16_t mValue, int xPos, int yPos)
 	num = abs(mValue) / 1000;	//整数部
 	dec = abs(mValue) % 1000;	//小数部
 	
+	/*
 	//10mV未満は小数第2位まで表示（小数第3位以下は切り捨て）
 	//10mV以上は小数第1位まで表示（小数第2位以下は切り捨て）
 	//[9.99][10.0]mVが境目
+	
 	if (num < 10)
 	{
-		lcdPutChar(' ');
+	*/
+		if (num < 10)
+			lcdPutChar(' ');
 		lcdPutUInt(num);
 		lcdPutChar('.');
 		//小数部3桁中2桁表示（3桁目は切り捨て）
 		dec /= 10;
 		if (dec < 10) lcdPutChar('0');
 		lcdPutUInt(dec);
+	/*
 	}
 	else
 	{
@@ -320,6 +325,7 @@ void	lcdPutVoltage(int16_t mValue, int xPos, int yPos)
 		//小数部3桁中1桁表示（2桁目以降は切り捨て）
 		lcdPutUInt(dec / 1000);
 	}
+	*/
 	
 	lcdPutStr("V");
 }
@@ -339,8 +345,8 @@ void	lcdPutCurrent(int16_t mValue, int xPos, int yPos)
 	else
 		lcdPutChar(' ');
 	
-	num = mValue / 10;	//整数部
-	dec = mValue % 10;	//小数部
+	num = abs(mValue) / 10;	//整数部
+	dec = abs(mValue) % 10;	//小数部
 	
 	//100mA未満は小数第1位まで表示
 	//100mA以上は整数部のみ表示（小数点以下は切り捨て）
@@ -442,7 +448,7 @@ int main(void)
 		//===== GND電圧を測定する ===================================================
 		//
 		ADMUX =	ADC_SET_GND;
-		wait_ms(5);	//安定待ち
+		wait_ms(10);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 		
 		adcGNDs[idx] = ADC;
@@ -457,7 +463,7 @@ int main(void)
         //===== 正電圧を測定する ===================================================
 		//
 		ADMUX =	ADC_SET_PVOLTAGE;
-		wait_ms(5);	//安定待ち
+		wait_ms(10);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 		
 		adcPVoltages[idx] = ADC;
@@ -473,7 +479,7 @@ int main(void)
 		//===== 負電圧を測定する ===================================================
 		//
 		ADMUX =	ADC_SET_NVOLTAGE;
-		wait_ms(5);	//安定待ち
+		wait_ms(10);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 			
 		adcNVoltages[idx] = ADC;
@@ -489,7 +495,7 @@ int main(void)
 		//===== 電流を測定する ====================================================
 		//
 		ADMUX =	ADC_SET_CURRENT;
-		wait_ms(5);	//安定待ち
+		wait_ms(10);	//安定待ち
 		sleep_mode();	//スリープモード突入…変換中…変換完了
 			
 		adcCurrents[idx] = ADC;
@@ -509,7 +515,7 @@ int main(void)
 		else {		
 			lcdLineClear(1, 0);
 			lcdSetPos(8, 0);
-			lcdPutStr("OVER");
+			lcdPutStr("  OVER");
 		}
 		
 		//次のループの準備
